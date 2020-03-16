@@ -1,0 +1,19 @@
+global:
+  scrape_interval:     15s
+  external_labels:
+    monitor: 'xyndata-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          group: 'local'
+
+  - job_name: 'user'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['user:3000']
+        labels:
+          group: 'user'

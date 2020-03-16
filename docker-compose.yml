@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  user:
+    image: node:lts-alpine
+    env_file: docker/user/.env
+    volumes:
+      - ./user/:/app/
+    depends_on:
+      - pgdb
+    working_dir: /app
+    command: ash -c "yarn && yarn dev"
+
+  pgdb:
+    image: postgres:11.4
+    env_file: docker/pgdb/.env
+    volumes:
+      - ./volume/db:/var/lib/postgresql/data
+

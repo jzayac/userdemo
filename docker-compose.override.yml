@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "4000:80"
+      # - "5432:5432"
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/
+
+  pgdb:
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    environment:
+      - ADMINER_DEFAULT_SERVER=pgdb
+    ports:
+      - 8080:8080
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   ports:
+  #     - "9091:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # grafana:
+  #   image: grafana/grafana
+  #   ports:
+  #     - "9092:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=password
+  #   volumes:
+  #     - ./volume/grafana/grafana_db:/var/lib/grafana grafana/grafana
+
