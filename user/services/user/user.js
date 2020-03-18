@@ -1,20 +1,18 @@
 const serviceModule = require("./service");
 const loggingModule = require("./logging");
+const authModule = require("./auth");
 const validatingModule = require("./validating");
 const transportModule = require("./transportHttp");
-// const userModelModule = require("../../model/user/userModel")
 
-const logger = console;
+const jwtSecret = process.env.JWT_SECRET;
 
-// const userModel = userModelModule(logger);
+module.exports = function(logger) {
+  let service = serviceModule(logger, jwtSecret);
 
-// initialize service layers
-let service = serviceModule(
-  logger,
-  process.env.JWT_SECRET,
-);
-service = validatingModule(logger, service);
-service = loggingModule(logger, service);
-service = transportModule(logger, service);
+  service = validatingModule(logger, service);
+  service = authModule(logger, service, jwtSecret);
+  service = loggingModule(logger, service);
+  service = transportModule(logger, service);
 
-module.exports = service;
+  return service;
+};

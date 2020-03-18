@@ -6,10 +6,11 @@ services:
     env_file: docker/user/.env
     volumes:
       - ./user/:/app/
+      - ./sharedLib/:/app/node_modules/sharedLib/
     depends_on:
       - pgdb
     working_dir: /app
-    command: ash -c "yarn && yarn dev"
+    command: ash -c "npm install && yarn dev"
 
   pgdb:
     image: postgres:11.4

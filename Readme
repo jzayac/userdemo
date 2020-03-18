@@ -1,5 +1,30 @@
-CREATE TABLE users (
-  ID SERIAL PRIMARY KEY,
-  username VARCHAR(40) UNIQUE,
-  password VARCHAR(255) NOT NULL
-);
+setup:
+  1. add to hosts:
+    127.0.0.1 xyndata.user.local
+    127.0.0.1 xyndata.adminer.local
+    127.0.0.1 xyndata.grafana.local
+
+  2. run docker:
+    docker-compose up -d
+
+  3. init db:
+    - created user "admin" with pass "admin"
+    - and "editor" with same password
+    make run-init-db
+
+
+existin endpoints on:
+post -> http://xyndata.user.local:4000/v1/user/login
+post -> http://xyndata.user.local:4000/v1/user/logout
+get -> http://xyndata.user.local:4000/v1/me
+get -> http://xyndata.user.local:4000/status
+
+
+cron job command for removig old tokens inside container: node console.js remove-old-token
+
+todo:
+recreate token after 15 minutes
+logger to manage trace-id from ctx
+prometeus
+swagger
+

@@ -1,6 +1,5 @@
+const constants = require("./constants")
 const { getTraceIdFromContext } = require("./trace");
-
-const ERR_LOGGER_EXCEPTION = "logger middleware: catch unhandled exception";
 
 async function loggerMiddleware(ctx, logger, next, args) {
   const start = Date.now();
@@ -17,7 +16,7 @@ async function loggerMiddleware(ctx, logger, next, args) {
   } catch (e) {
     message.exception_name = e.name;
     message.exception_message = e.message;
-    err = ERR_LOGGER_EXCEPTION;
+    err = constants.ERR_LOGGER_EXCEPTION;
   }
 
   if (process.env.NODE_ENV === "development") {
@@ -27,12 +26,11 @@ async function loggerMiddleware(ctx, logger, next, args) {
   message.error = err;
   message.took = Date.now() - start + "ms";
 
-  logger.info(JSON.stringify(message));
+  logger.info(JSON.stringify(message), ctx);
 
   return [output, err];
 }
 
 module.exports = {
   loggerMiddleware,
-  ERR_LOGGER_EXCEPTION,
 };

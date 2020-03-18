@@ -1,24 +1,44 @@
-const transportModule = require("../../serviceLib/transport");
-const trace = require("../../serviceLib/trace");
+const transportModule = require("sharedLib/service/transport");
+const trace = require("sharedLib/service/trace");
+const token = require("sharedLib/service/token");
 const constants = require("./constants");
+const constantsService = require("sharedLib/service/constants");
+const express = require("express");
 
 module.exports = function(logger, service) {
-  const options = {
+  const router = express.Router();
+  const optionsLogin = {
     before: [trace.getTraceIdFromRequestHeaderMiddleware],
+    after: [trace.setTraceToResponseHeaderMiddleware]
+  };
+
+  const options = {
+    before: [
+      trace.getTraceIdFromRequestHeaderMiddleware,
+      token.getTokenFromRequestHeaderMiddleware
+    ],
     after: [trace.setTraceToResponseHeaderMiddleware]
   };
 
   function encodeError(err, res) {
     switch (err) {
-      // case constants.ERR_NOT_FOUND_CAR:
-      // case constants.ERR_NOT_FOUND_DELIVERY_METHODS:
-      // case constants.ERR_NOT_FOUND_CONFIGURATION:
-      //   res.status(404);
-      //   res.json({
-      //     res: null,
-      //     err: err,
-      //   });
-      //   break;
+      case constantsService.ERR_INVALID_TOKEN:
+      case constantsService.ERR_MISSING_TOKEN:
+        res.status(403);
+        res.json({
+          res: null,
+          err: "Authorization Error"
+        });
+        break;
+      case constants.ERR_INVALID_LOGIN_OR_PASSWORD:
+      case constants.ERR_MISSING_NAME:
+      case constants.ERR_MISSING_PASSWORD:
+        res.status(404);
+        res.json({
+          res: null,
+          err: err
+        });
+        break;
       default:
         res.status(500);
         res.json({
@@ -28,36 +48,30 @@ module.exports = function(logger, service) {
     }
   }
 
-  const initialDataOptions = {
-    before: [trace.getTraceIdFromRequestHeaderMiddleware],
-    after: [trace.setTraceToResponseHeaderMiddleware]
-  };
-
-  // - /user/login
-  // - /user/logout
-  // - /me
-  // - /status
-
-  const transportInitialData = transportModule(logger, encodeError, options);
+  const transportInitialData = transportModule(
+    logger,
+    encodeError,
+    optionsLogin
+  );
   const initialDataDecoder = req => [req.body.username, req.body.password];
   const login = transportInitialData.newEndpoint(
-    // "POST",
-    // "/user/login",
     service.login,
     initialDataDecoder
   );
+  router.post("/v1/user/login", login);
 
-  const transportCarData = transportModule(logger, encodeError, options);
-  const carDataDecoder = () => [];
-  const logout = transportCarData.newEndpoint(
-    // "POST",
-    // "/user/logout",
+  const transportData = transportModule(logger, encodeError, options);
+  const logoutDataDecoder = () => [];
+  const logout = transportData.newEndpoint(
     service.logout,
-    carDataDecoder
+    logoutDataDecoder
   );
+  router.post("/v1/user/logout", logout);
 
-  return {
-    login,
-    logout
-  };
+  // const transportInfoData = transportModule(logger, encodeError, options);
+  const infoDataDecoder = () => [];
+  const info = transportData.newEndpoint(service.info, infoDataDecoder);
+  router.get("/v1/me", info);
+
+  return router;
 };

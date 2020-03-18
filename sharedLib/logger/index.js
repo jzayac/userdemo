@@ -1,4 +1,4 @@
-const log4jsmodule = require('log4js');
+const log4jsmodule = require("log4js");
 
 const logger = function(namespace, log4js) {
   const name = namespace || "undefined";
@@ -39,8 +39,8 @@ const logger = function(namespace, log4js) {
     info: info,
     warn: warn,
     error: error,
-    fatal: fatal,
+    fatal: fatal
   };
-}
+};
 
 module.exports = logger;

@@ -49,4 +49,3 @@ module.exports = function(logger, encodeError, options) {
     newEndpoint,
   };
 };
-

@@ -18,7 +18,8 @@ module.exports = function(app) {
         version: "1.0.0",
       },
     },
-    apis: ["./frontend-api/router/*/*.js"],
+    // TODO: import swagger file
+    apis: ["./frontend-api/read/*/transportHttp.js"],
   };
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);

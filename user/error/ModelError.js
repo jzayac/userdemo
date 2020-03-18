@@ -1,6 +1,6 @@
 class ModelError extends Error {
-  constructor(message, status, body, previousError = null) {
-    super(message, status, body, previousError);
+  constructor(message, status, errorCode) {
+    super(message, status, errorCode);
     this.name = 'ModelError';
   }
 }

@@ -1,4 +1,4 @@
-const { loggerMiddleware } = require("../../serviceLib/loggingMiddleware");
+const { loggerMiddleware } = require("sharedLib/service/loggingMiddleware");
 
 module.exports = function(logger, next) {
   async function login(ctx, ...args) {
@@ -9,8 +9,13 @@ module.exports = function(logger, next) {
     return await loggerMiddleware(ctx, logger, next.logout, args);
   }
 
+  async function info(ctx, ...args) {
+    return await loggerMiddleware(ctx, logger, next.info, args);
+  }
+
   return {
     logout,
-    login
+    login,
+    info
   };
 };
