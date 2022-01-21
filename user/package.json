@@ -16,7 +16,7 @@
     "express": "4.17.1",
     "helmet": "3.21.3",
     "jsonwebtoken": "8.5.1",
-    "log4js": "6.1.2",
+    "log4js": "6.4.0",
     "pg": "7.18.2",
     "swagger-jsdoc": "3.5.0",
     "swagger-ui-express": "4.1.3",
